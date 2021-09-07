@@ -1,0 +1,27 @@
+"Phrases"
+{
+	"Score restored"
+	{
+		"en" "Saved score reloaded"
+		"es" "Puntuación recargada"
+	}
+
+	"Cash restored"
+	{
+		"#format"	"{1:i}"
+		"en"		"Cash restored to ${1}"
+		"es"		"Dinero reiniciado a ${1}"
+	}
+
+	"You have just reset your score"
+	{
+		"en" "You have just reset your score"
+		"es" "Acabas de reiniciar tu puntuación"
+	}
+
+	"Reset Score"
+	{
+		"en" "Reset score"
+		"es" "Reiniciar puntuación"
+	}
+}
