@@ -207,6 +207,8 @@ public Action Action_TFHighScoreDeath_End(Handle timer, any client)
 	{
 		TFStatsFix_ClientModScore(client);
 	}
+
+	return Plugin_Continue;
 }
 
 // --- Situation #3 ---
@@ -225,6 +227,7 @@ public Action Event_TFHighScoreRound_Start(Handle event, const char[] name, bool
 public Action Action_TFHighScoreRound_Start(Handle timer, any client)
 {
 	TFStatsFix_NonModScores();
+	return Plugin_Continue;
 }
 
 public Action Event_TFHighScoreRound_End(Handle event, const char[] name, bool dontBroadcast)

@@ -13,7 +13,7 @@
 #undef REQUIRE_PLUGIN 
 #include <autoupdate>
 
-#define PLUGIN_VERSION "1.3.6"
+#define PLUGIN_VERSION "1.3.7"
 
 #define SCORE_LOAD_CHAT_READY_DELAY 1.5 // Enough delay since connect before chat messages can be sent and get displayed
 
@@ -139,6 +139,7 @@ public Action MarkNextRoundAsNewGame(Handle timer)
 {
 	isNewGameTimer = false;
 	g_NextRoundNewGame = true;
+	return Plugin_Continue;
 }
 
 // If round is a new game we should clear DB or restore players' scores
@@ -311,6 +312,8 @@ public Action ClearDBDelayed(Handle timer)
 	{
 		ClearDBQuery();
 	}
+
+	return Plugin_Handled;
 }
 
 // Doing clearing stuff
@@ -516,13 +519,15 @@ public Action Event_PlayerDisconnect(Handle event, const char[] name, bool dontB
 	justConnected[client] = true;
 	
 	if (!client || isLAN || !save_scores || !IsClientInGame(client) || IsFakeClient(client))
-		return;
+		return Plugin_Continue;
 	
 	InsertScoreInDB(client);
 	
 	// Clearing TF scores
 	TFScore[client] = SCORE_NOACTION;
 	TFScoreMod[client] = SCOREMOD_NOACTION;
+
+	return Plugin_Continue;
 }
 
 void InsertScoreInDB(int client)
@@ -561,7 +566,7 @@ void InsertScoreQuery(const char[] steamId, int frags, int deaths, int cash)
 }
 
 // Now we need get this information back...
-public int GetScoreFromDB(int client)
+public void GetScoreFromDB(int client)
 {
 	if (IsClientInGame(client))
 	{
@@ -586,6 +591,8 @@ Action LoadScoreDelayed(Handle timer, int userId)
 		Format(query, sizeof(query), "SELECT * FROM	savescores_scores WHERE steamId = '%s';", steamId);
 		SQL_TQuery(g_hDB, SetPlayerScore, query, userId);
 	}
+
+	return Plugin_Handled;
 }
 
 // ...and set player's score and cash if needed
@@ -599,7 +606,7 @@ public void SetPlayerScore(Handle owner, Handle hndl, const char[] error, any us
 		return;
 	}
 	
-	if (SQL_GetRowCount(hndl) < 1 || client < 1)
+	if (client < 1 || !SQL_FetchRow(hndl))
 	{
 		return;
 	}
